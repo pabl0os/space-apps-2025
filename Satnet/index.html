@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Three.js App</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
+  <!-- link in stylesheet -->
+  <link rel="stylesheet" href="./stylesheets/mystyle.css" />
+  <script type="importmap">
+      {
+        "imports": {
+          "three": "https://cdn.jsdelivr.net/npm/three@0.165.0/build/three.module.js",
+          "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.165.0/examples/jsm/",
+          "@/config": "./javascripts/config.js",
+          "@/CelestialObject": "./javascripts/CelestialObject.js",
+          "@/Earth": "./javascripts/Earth.js",
+          "@/Moon": "./javascripts/Moon.js",
+          "@/Sun": "./javascripts/Sun.js",
+          "@/Satellite": "./javascripts/Satellite.js",
+          "@/WorldTime": "./javascripts/WorldTime.js",
+          "@/LaunchBases": "./javascripts/LaunchBases.js",
+          "@/Manager": "./javascripts/Manager.js",
+          "@/orbitEquation": "./javascripts/orbitEquation.js",
+          "@/ToolTip": "./javascripts/ToolTip.js",
+          "@/Helper": "./javascripts/Helper.js"
+        }
+      }
+    </script>
+</head>
+
+<body>
+  <canvas class="webgl"></canvas>
+
+  <div id="reset-camera-btn">
+    <span>Satellite Visualization</span>
+  </div>
+
+  <div id="legend-container">
+    <div id="launch-legend">
+      <div class="legend-title">Satellite Launch Bases</div>
+      <div class="legend-item">
+        <span class="color-indicator" style="background-color: #4caf50"></span>
+        <p>Successful Launch</p>
+      </div>
+      <div class="legend-item">
+        <span class="color-indicator" style="background-color: #f44336"></span>
+        <p>Launch Failure</p>
+      </div>
+      <div class="legend-item">
+        <span class="color-indicator" style="background-color: #555"></span>
+        <p>Other</p>
+      </div>
+    </div>
+    <div id="satellite-legend">
+      <div class="legend-title">Satellites</div>
+      <div class="legend-item">
+        <span class="color-indicator" style="background-color: #2196f3"></span>
+        <p>CIVIL</p>
+      </div>
+      <div class="legend-item">
+        <span class="color-indicator" style="background-color: #ff9800"></span>
+        <p>COMMERCIAL</p>
+      </div>
+      <div class="legend-item">
+        <span class="color-indicator" style="background-color: #9c27b0"></span>
+        <p>GOVERNMENT</p>
+      </div>
+      <div class="legend-item">
+        <span class="color-indicator" style="background-color: #00897b"></span>
+        <p>MILITARY</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="progress-bar-container">
+    <label id="loading-text" for="progress-bar">Loading...</label>
+    <progress id="progress-bar" value="0" max="100"></progress>
+  </div>
+
+  <div id="world-time-display" class="time-display">
+    <span id="time-text"></span>
+  </div>
+
+  <script type="module" src="./javascripts/mainapp.js"></script>
+</body>
+
+</html>
