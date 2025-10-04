@@ -164,8 +164,8 @@ const gui = new GUI().hide();
 const satelliteMenu = gui.addFolder("Satellites");
 // const launchSiteMenu = gui.addFolder("Launch Bases");
 // const spaceDebrisMenu = gui.addFolder("Space Debris");
-const timeSpeedMenu = gui.addFolder("Time Controller");
-const timeSetMenu = timeSpeedMenu.addFolder("Set Specific Time");
+// const timeSpeedMenu = gui.addFolder("Time Controller");
+// const timeSetMenu = timeSpeedMenu.addFolder("Set Specific Time");
 const layerFilterMenu = gui.addFolder("Layers");
 
 let isEarthTexture = true;
@@ -444,16 +444,17 @@ function createGUI() {
     satelliteMenu.add(settings, "User", ["ALL", "CIVIL", "COMMERCIAL", "GOVERNMENT", "MILITARY"])
         .onChange(value => satellites.updateFilter(value));
 
-    timeSpeedMenu.add(settings, "Time speed",
-        uxConfig.minTimeScale, uxConfig.maxTimeScale, uxConfig.timeScaleStep)
-        .onChange(value => worldTime.setTimeScale(value));
+    // timeSpeedMenu.add(settings, "Time speed",
+    //     uxConfig.minTimeScale, uxConfig.maxTimeScale, uxConfig.timeScaleStep)
+    //     .onChange(value => worldTime.setTimeScale(value));
 
-    timeSetMenu.add(worldTime, 'year').name("Year").onFinishChange(value => worldTime.setYear(value));
-    timeSetMenu.add(worldTime, 'month').name("Month").onFinishChange(value => worldTime.setMonth(value));
-    timeSetMenu.add(worldTime, 'day').name("Day").onFinishChange(value => worldTime.setDay(value));
-    timeSetMenu.add(worldTime, 'hours').name("Hours").onFinishChange(value => worldTime.setHours(value));
-    timeSetMenu.add(worldTime, 'minutes').name("Minutes").onFinishChange(value => worldTime.setMinutes(value));
-    timeSetMenu.add(worldTime, 'seconds').name("Seconds").onFinishChange(value => worldTime.setSeconds(value));
+
+    // timeSetMenu.add(worldTime, 'year').name("Year").onFinishChange(value => worldTime.setYear(value));
+    // timeSetMenu.add(worldTime, 'month').name("Month").onFinishChange(value => worldTime.setMonth(value));
+    // timeSetMenu.add(worldTime, 'day').name("Day").onFinishChange(value => worldTime.setDay(value));
+    // timeSetMenu.add(worldTime, 'hours').name("Hours").onFinishChange(value => worldTime.setHours(value));
+    // timeSetMenu.add(worldTime, 'minutes').name("Minutes").onFinishChange(value => worldTime.setMinutes(value));
+    // timeSetMenu.add(worldTime, 'seconds').name("Seconds").onFinishChange(value => worldTime.setSeconds(value));
 
 
     layerFilterMenu.add(settings, "toggleSun");
@@ -470,8 +471,8 @@ function createGUI() {
     satelliteMenu.close();
     // launchSiteMenu.close();
     // spaceDebrisMenu.close();
-    timeSpeedMenu.open();
-    timeSetMenu.close();
+    // timeSpeedMenu.open();
+    // timeSetMenu.close();
     layerFilterMenu.open();
 }
 
