@@ -84,13 +84,14 @@ const satellitesLegend = document.getElementById("satellite-legend");
 const earthMapTexture = textureLoader.load("./images/earthmap10k.jpg");
 const earthBumpTexture = textureLoader.load("./images/earthbump10k.jpg");
 const earthEmissionTexture = textureLoader.load("./images/earthlights10k.jpg");
+// const earthEmissionTexture = textureLoader.load("./images/earthlights10k.jpg");
 // const earthReflectTextuure = textureLoader.load("./images/earthspec10k.jpg"); // Image not found
 const cloudTexture = textureLoader.load("./images/earthcloudmap.jpg");
 const cloudTransTexture = textureLoader.load("./images/earthcloudmaptrans.jpg");
 // const moonMapTexture = textureLoader.load("./images/moonmap1k.jpg"); // Image not found
 // const moonBumpTexture = textureLoader.load("./images/moonbump1k.jpg"); // Image not found
 const backgroundTexture = textureLoader.load("./images/background.jpg");
-
+const marsTexture = textureLoader.load("./images/marte.jpg");
 
 // Declare variables
 let deltaTime = new THREE.Clock();
@@ -167,6 +168,8 @@ const timeSpeedMenu = gui.addFolder("Time Controller");
 const timeSetMenu = timeSpeedMenu.addFolder("Set Specific Time");
 const layerFilterMenu = gui.addFolder("Layers");
 
+let isEarthTexture = true;
+
 const settings = {
     "Total Satellite": 0,
     "User": "ALL",
@@ -174,6 +177,7 @@ const settings = {
     toggleSun: function () {
 
         camera.layers.toggle(layerConfig.sunLayer);
+
 
     },
     togglePlanets: function () {
@@ -208,9 +212,35 @@ const settings = {
 
     },
     toggleIcons: function () {
-
         camera.layers.toggle(layerConfig.toolTipsLayer);
 
+        // Buscar el material en toda la jerarquía del objeto
+        function findMaterial(obj) {
+            if (obj.material) return obj.material;
+            if (obj.mesh && obj.mesh.material) return obj.mesh.material;
+            if (obj.children) {
+                for (let child of obj.children) {
+                    if (child.material) return child.material;
+                }
+            }
+            return null;
+        }
+
+        const material = findMaterial(earth.ground);
+
+        if (material) {
+            if (isEarthTexture) {
+                material.map = marsTexture;
+                console.log("Cambiado a Marte");
+            } else {
+                material.map = earthMapTexture;
+                console.log("Cambiado a Tierra");
+            }
+            material.needsUpdate = true;
+            // isEarthTexture = !isEarthTexture;
+        } else {
+            console.error("No se pudo encontrar el material");
+        }
     },
     toggleUI: function () {
 
