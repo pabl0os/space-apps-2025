@@ -81,17 +81,20 @@ const launchSitesLegend = document.getElementById("launch-legend");
 const satellitesLegend = document.getElementById("satellite-legend");
 
 // Load assets
-const earthMapTexture = textureLoader.load("./images/earthmap10k.jpg");
+const earthMapTexture = textureLoader.load("./images/earthmap10k (1).jpg");
 const earthBumpTexture = textureLoader.load("./images/earthbump10k.jpg");
-const earthEmissionTexture = textureLoader.load("./images/earthlights10k.jpg");
-// const earthEmissionTexture = textureLoader.load("./images/earthlights10k.jpg");
+// const earthEmissionTexture = null;
+const earthEmissionTexture = textureLoader.load("./images/minegro.jpg");
 // const earthReflectTextuure = textureLoader.load("./images/earthspec10k.jpg"); // Image not found
 const cloudTexture = textureLoader.load("./images/earthcloudmap.jpg");
 const cloudTransTexture = textureLoader.load("./images/earthcloudmaptrans.jpg");
 // const moonMapTexture = textureLoader.load("./images/moonmap1k.jpg"); // Image not found
 // const moonBumpTexture = textureLoader.load("./images/moonbump1k.jpg"); // Image not found
 const backgroundTexture = textureLoader.load("./images/background.jpg");
-const marsTexture = textureLoader.load("./images/marte.jpg");
+const texturaModis = textureLoader.load("./images/MODIS-2002-2.jpg");
+const texturaCeres = textureLoader.load("./images/terra_ceres_toa_netflux.png");
+const texturaMopitt = textureLoader.load("./images/terra_mopitt_co2.png");
+const texturaAster = textureLoader.load("./images/ASTER-2012.jpg");
 
 // Declare variables
 let deltaTime = new THREE.Clock();
@@ -143,7 +146,7 @@ const earth = new Earth(
 const moon = new Moon(null, null); // moonMapTexture, moonBumpTexture - images not found
 const satellites = new Satellite(scene);
 const worldTime = new WorldTime(0, 0, 0, 1, 1, 1981, environmentConfig.initTimeScale);
-const launchBase = new LaunchSite(earth);
+// const launchBase = new LaunchSite(earth);
 const toolTip = new ToolTip();
 const helperTool = new Helper();
 
@@ -161,57 +164,59 @@ const bloomComposer = new EffectComposer(renderer);
 
 
 const gui = new GUI().hide();
-const satelliteMenu = gui.addFolder("Satellites");
+// const satelliteMenu = gui.addFolder("Satellites");
 // const launchSiteMenu = gui.addFolder("Launch Bases");
 // const spaceDebrisMenu = gui.addFolder("Space Debris");
 // const timeSpeedMenu = gui.addFolder("Time Controller");
 // const timeSetMenu = timeSpeedMenu.addFolder("Set Specific Time");
-const layerFilterMenu = gui.addFolder("Layers");
+const layerFilterMenu = gui.addFolder("Módulos");
 
-let isEarthTexture = true;
+let isModisTexture = false;
+let isCeresTexture = false;
+let isAsterTexture = false;
+let isMopittTexture = false;
+
+function reiniciarTexturas(val) {
+    switch (val) {
+        case 'MODIS':
+            isCeresTexture = false;
+            isAsterTexture = false;
+            isMopittTexture = false;
+            isModisTexture = true;
+            break;
+        case 'CERES':
+            isCeresTexture = true;
+            isAsterTexture = false;
+            isMopittTexture = false;
+            isModisTexture = false;
+        break;
+        case 'MOPITT':
+            isCeresTexture = false;
+            isAsterTexture = false;
+            isMopittTexture = true;
+            isModisTexture = false;
+        break;
+        case 'ASTER':
+            isCeresTexture = false;
+            isAsterTexture = true;
+            isMopittTexture = false;
+            isModisTexture = false;
+        break;
+        default:
+            isCeresTexture = false;
+            isAsterTexture = false;
+            isMopittTexture = false;
+            isModisTexture = false;
+        break;
+    }
+
+}
 
 const settings = {
     "Total Satellite": 0,
     "User": "ALL",
     "Time speed": 200.0,
-    toggleSun: function () {
-
-        camera.layers.toggle(layerConfig.sunLayer);
-
-
-    },
-    togglePlanets: function () {
-
-        camera.layers.toggle(layerConfig.planetsLayer);
-
-    },
-    toggleEarth: function () {
-
-        camera.layers.toggle(layerConfig.earthGroundLayer);
-        camera.layers.toggle(layerConfig.earthCloudLayer);
-
-    },
-    toggleEarthGroundView: function () {
-
-        camera.layers.toggle(layerConfig.earthCloudLayer);
-
-    },
-    toggleDebugHelper: function () {
-
-        camera.layers.toggle(layerConfig.helperLayer);
-
-    },
-    toggleSatellites: function () {
-
-        camera.layers.toggle(layerConfig.satellitesLayer);
-
-    },
-    toggleLaunchBases: function () {
-
-        camera.layers.toggle(layerConfig.launchSitesLayer);
-
-    },
-    toggleIcons: function () {
+    CERES: function () {        
         camera.layers.toggle(layerConfig.toolTipsLayer);
 
         // Buscar el material en toda la jerarquía del objeto
@@ -229,12 +234,51 @@ const settings = {
         const material = findMaterial(earth.ground);
 
         if (material) {
-            if (isEarthTexture) {
-                material.map = marsTexture;
-                console.log("Cambiado a Marte");
-            } else {
+            if (isCeresTexture) {
                 material.map = earthMapTexture;
                 console.log("Cambiado a Tierra");
+                reiniciarTexturas('no');
+            } else {
+                material.map = texturaCeres;
+                console.log("Cambiado a Marte");
+                reiniciarTexturas('CERES');
+            }
+            material.needsUpdate = true;
+            // isEarthTexture = !isEarthTexture;
+        } else {
+            console.error("No se pudo encontrar el material");
+        }
+
+    },
+    MOPITT: function () {
+
+        // camera.layers.toggle(layerConfig.planetsLayer);
+
+        camera.layers.toggle(layerConfig.toolTipsLayer);
+
+        // Buscar el material en toda la jerarquía del objeto
+        function findMaterial(obj) {
+            if (obj.material) return obj.material;
+            if (obj.mesh && obj.mesh.material) return obj.mesh.material;
+            if (obj.children) {
+                for (let child of obj.children) {
+                    if (child.material) return child.material;
+                }
+            }
+            return null;
+        }
+
+        const material = findMaterial(earth.ground);
+
+        if (material) {
+            if (isMopittTexture) {
+                material.map = earthMapTexture;
+                console.log("Cambiado a Tierra");
+                reiniciarTexturas('no');
+            } else {
+                material.map = texturaMopitt;
+                console.log("Cambiado a Marte");
+                reiniciarTexturas('MOPITT');
             }
             material.needsUpdate = true;
             // isEarthTexture = !isEarthTexture;
@@ -242,7 +286,95 @@ const settings = {
             console.error("No se pudo encontrar el material");
         }
     },
-    toggleUI: function () {
+    ASTER: function () {
+
+        // camera.layers.toggle(layerConfig.earthGroundLayer);
+        // camera.layers.toggle(layerConfig.earthCloudLayer);
+
+        camera.layers.toggle(layerConfig.toolTipsLayer);
+
+        // Buscar el material en toda la jerarquía del objeto
+        function findMaterial(obj) {
+            if (obj.material) return obj.material;
+            if (obj.mesh && obj.mesh.material) return obj.mesh.material;
+            if (obj.children) {
+                for (let child of obj.children) {
+                    if (child.material) return child.material;
+                }
+            }
+            return null;
+        }
+
+        const material = findMaterial(earth.ground);
+
+        if (material) {
+            if (isAsterTexture) {
+                material.map = earthMapTexture;
+                console.log("Cambiado a Tierra");
+                reiniciarTexturas('no');
+            } else {
+                material.map = texturaAster;
+                console.log("Cambiado a Marte");
+                reiniciarTexturas('ASTER');
+            }
+            material.needsUpdate = true;
+            // isEarthTexture = !isEarthTexture;
+        } else {
+            console.error("No se pudo encontrar el material");
+        }
+    },
+    Nubes: function () {
+
+        camera.layers.toggle(layerConfig.earthCloudLayer);
+
+    },
+    Iluminación: function () {
+
+        camera.layers.toggle(layerConfig.helperLayer);
+
+    },
+    toggleSatellites: function () {
+
+        camera.layers.toggle(layerConfig.satellitesLayer);
+
+    },
+    toggleLaunchBases: function () {
+        camera.layers.toggle(layerConfig.launchSitesLayer);
+    },
+    MODIS: function () {
+        camera.layers.toggle(layerConfig.toolTipsLayer);
+
+        // Buscar el material en toda la jerarquía del objeto
+        function findMaterial(obj) {
+            if (obj.material) return obj.material;
+            if (obj.mesh && obj.mesh.material) return obj.mesh.material;
+            if (obj.children) {
+                for (let child of obj.children) {
+                    if (child.material) return child.material;
+                }
+            }
+            return null;
+        }
+
+        const material = findMaterial(earth.ground);
+
+        if (material) {
+            if (isModisTexture) {
+                material.map = earthMapTexture;
+                console.log("Cambiado a Tierra");
+                reiniciarTexturas('no');
+            } else {
+                material.map = texturaModis;
+                console.log("Cambiado a Marte");
+                reiniciarTexturas('MODIS');
+            }
+            material.needsUpdate = true;
+            // isEarthTexture = !isEarthTexture;
+        } else {
+            console.error("No se pudo encontrar el material");
+        }
+    },
+    Ocultar: function () {
 
         camera.layers.set(0);
         camera.layers.enable(1);
@@ -424,7 +556,8 @@ function setupCameraControll() {
         cameraConfig.camearInitPosition.z
     );
     camera.layers.enableAll();
-    camera.layers.disable(layerConfig.helperLayer);
+    // camera.layers.disable(layerConfig.helperLayer);
+    camera.layers.enable(layerConfig.helperLayer);
 
     panController.target = earth.position;
     panController.enableDamping = true;
@@ -440,9 +573,10 @@ function setupCameraControll() {
 
 function createGUI() {
 
-    satelliteMenu.add(settings, "Total Satellite").listen();
-    satelliteMenu.add(settings, "User", ["ALL", "CIVIL", "COMMERCIAL", "GOVERNMENT", "MILITARY"])
-        .onChange(value => satellites.updateFilter(value));
+    // satelliteMenu.add(settings, "Total Satellite").listen();
+    // satelliteMenu.add(settings, "User", ["ALL", "CIVIL", "COMMERCIAL", "GOVERNMENT", "MILITARY"])
+        // .onChange(value => satellites.updateFilter(value));
+
 
     // timeSpeedMenu.add(settings, "Time speed",
     //     uxConfig.minTimeScale, uxConfig.maxTimeScale, uxConfig.timeScaleStep)
@@ -457,18 +591,18 @@ function createGUI() {
     // timeSetMenu.add(worldTime, 'seconds').name("Seconds").onFinishChange(value => worldTime.setSeconds(value));
 
 
-    layerFilterMenu.add(settings, "toggleSun");
-    layerFilterMenu.add(settings, "togglePlanets");
-    layerFilterMenu.add(settings, "toggleEarth");
-    layerFilterMenu.add(settings, "toggleEarthGroundView");
-    layerFilterMenu.add(settings, "toggleDebugHelper");
-    layerFilterMenu.add(settings, "toggleSatellites");
-    layerFilterMenu.add(settings, "toggleLaunchBases");
-    layerFilterMenu.add(settings, "toggleIcons");
-    layerFilterMenu.add(settings, "toggleUI");
+    layerFilterMenu.add(settings, "MODIS");
+    layerFilterMenu.add(settings, "CERES");
+    layerFilterMenu.add(settings, "MOPITT");
+    layerFilterMenu.add(settings, "ASTER");
+    layerFilterMenu.add(settings, "Nubes");
+    layerFilterMenu.add(settings, "Iluminación");
+    // layerFilterMenu.add(settings, "toggleSatellites");
+    // layerFilterMenu.add(settings, "toggleLaunchBases");
+    layerFilterMenu.add(settings, "Ocultar");
 
 
-    satelliteMenu.close();
+    // satelliteMenu.close();
     // launchSiteMenu.close();
     // spaceDebrisMenu.close();
     // timeSpeedMenu.open();
@@ -563,8 +697,8 @@ export function loop() {
     }
 
     // Update world Time
-    worldTime.update(deltaTime);
-    worldTime.display(finishLoading);
+    // worldTime.update(deltaTime);
+    // worldTime.display(finishLoading);
 
     // Update orbit motion
     moon.update(earth, worldTime);

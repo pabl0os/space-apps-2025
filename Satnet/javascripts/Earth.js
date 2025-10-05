@@ -21,6 +21,7 @@ export default class Earth {
             bumpMap: earthBumpTexture,
             emissiveMap: earthEmissionTexture,
             roughnessMap: earthReflectTextuure,
+            
         });
         const cloudMaterial = new MeshLambertMaterial({
             transparent: true,
